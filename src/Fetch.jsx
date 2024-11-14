@@ -1,35 +1,37 @@
 import {useEffect, useState} from "react";
 import {MovieCard} from "./MovieCard";
-import './index.css';
 
-const API_URL ="http://www.omdbapi.com/?apikey=389ea027&s="
+const Data = ()=> {
+    const [movies, setMovies] = useState([])
+    const [searchValue, setSearchValue] = useState("")
+    const BASE_URL = "http://www.omdbapi.com/?apikey=389ea027&s="
 
-export const App =()=> {
     useEffect(() => {
-        searchMovie("superman")
-    }, [])
-    const [movies, setMovie] = useState([])
-    const [searchTerm, setSearchTerm] = useState("");
-    const searchMovie = async (title) => {
-        const response = await fetch(`${API_URL}${title}`)
-        const data = await response.json()
-        setMovie(await data.Search)
+        searchMovies("superman")
+    }, []);
 
+    const searchMovies = async (title) => {
+        const response = await fetch(`${BASE_URL}${title}`)
+        if (!response.ok) {
+            throw new Error("ERROR FETCHING DATA FROM API")
+        }
+        const data = await response.json()
+        setMovies(data.Search)
     }
     return (
         <div>
             <h1>Movie app</h1>
-            <div className={"search"} >
+            <div className={"search"}>
                 <input type={"search"}
                        placeholder={"Search for a movie"}
-                       onChange={ (e)=>{
-                           setSearchTerm(e.target.value)
+                       onChange={(e) => {
+                           setSearchValue(e.target.value)
                        }}
                 />
                 <button
                     className={"search-button"}
-                    onClick={()=>{
-                        searchMovie(searchTerm)
+                    onClick={() => {
+                        searchMovies(searchValue)
                     }}>
                     Search
                 </button>
@@ -37,7 +39,7 @@ export const App =()=> {
             {movies?.length > 0 ? (
                 <div className="container">
                     {movies.map((movie) => (
-                        <MovieCard movie={movie} />
+                        <MovieCard movie={movie}/>
                     ))}
                 </div>
             ) : (
@@ -47,5 +49,6 @@ export const App =()=> {
             )}
         </div>
     );
-};
+}
 
+export default Data
