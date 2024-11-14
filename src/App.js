@@ -34,6 +34,7 @@ export const App =()=> {
                     Search
                 </button>
             </div>
+            <div></div>
             {movies?.length > 0 ? (
                 <div className="container">
                     {movies.map((movie) => (
