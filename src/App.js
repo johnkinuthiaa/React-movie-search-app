@@ -1,20 +1,51 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {MovieCard} from "./MovieCard";
+import './index.css';
 
-// const API_BASE_URL ="http://www.omdbapi.com/?apikey=389ea027&s=superman"
-export default function App(){
-    const [movieInfo,setMovieInfo] =useState([])
-    const fetchData =( async ()=>{
-        const response =await fetch("http://www.omdbapi.com/?apikey=389ea027&s=superman")
-        const data =await response.json()
-        setMovieInfo( await data.Search)
-    })
-    return(
+const API_URL ="http://www.omdbapi.com/?apikey=389ea027&s="
+
+export const App =()=> {
+    useEffect(() => {
+        searchMovie("superman")
+    }, [])
+    const [movies, setMovie] = useState([])
+    const [searchTerm, setSearchTerm] = useState("");
+    const searchMovie = async (title) => {
+        const response = await fetch(`${API_URL}${title}`)
+        const data = await response.json()
+        setMovie(await data.Search)
+
+    }
+    return (
         <div>
-            <MovieCard Poster={"src"} Type={"movie"} Title={"this movie"} Year={2024}/>
-            {/*{ movieInfo.map( (movie)=>{*/}
-            {/*    <MovieCard props={movie}/>*/}
-            {/*})}*/}
+            <h1>Movie app</h1>
+            <div className={"search"} >
+                <input type={"search"}
+                       placeholder={"Search for a movie"}
+                       onChange={ (e)=>{
+                           setSearchTerm(e.target.value)
+                       }}
+                />
+                <button
+                    className={"search-button"}
+                    onClick={()=>{
+                        searchMovie(searchTerm)
+                    }}>
+                    Search
+                </button>
+            </div>
+            {movies?.length > 0 ? (
+                <div className="container">
+                    {movies.map((movie) => (
+                        <MovieCard movie={movie} />
+                    ))}
+                </div>
+            ) : (
+                <div className="empty">
+                    <h2>No movies found</h2>
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
+
